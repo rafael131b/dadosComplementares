@@ -1,70 +1,85 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Accordions from "../Components/Accordions";
 import { IMaskInput } from "react-imask";
 import styles from "../styles/index.css";
-
+import { AppContext } from "../Services/context";
+import {dadosPacienteApi ,dadosRepresentanteApi,dadosResponsavelApi} from "../Services/api-fake"
 const ComplementarCadastro = () => {
   const [emancipado, setEmancipado] = useState(false);
   const [deficiente, setDeficiente] = useState(false);
   const [isIndigena, setIsIndigena] = useState(false);
   const [nacionalidade, setNacionalidade] = useState("Brasil");
-  useEffect(() => {}, [emancipado, deficiente, isIndigena, nacionalidade]);
+  const { setDadosPaciente, dadosPaciente, setFichaMedica,tipoPessoa,setContato,setDadosResponsavel,setDadosRepresentante,dadosRepresentante,dadosResponsavel} =
+    useContext(AppContext);
+  
+
+  
+
+  function changePeople(tipo){
+    if(tipo==='PACIENTE'){
+      return  dadosPacienteApi
+    }
+    if(tipo==='REPRESENTANTE'){
+      return dadosRepresentanteApi
+    }
+    if(tipo==='RESPONSAVEL')
+    return dadosResponsavelApi
+  }
+
+
+  useEffect(() => {}, emancipado, deficiente, isIndigena, nacionalidade,tipoPessoa,dadosPacienteApi);
+
+  
   return (
     <div>
       <Accordions title="Dados Pessoais Do Paciente">
         <form>
-          <div className="row">
-            <div className="col-md-4">
-              <label for="nomeCompleto">Nome Completo </label>
-              <input
-                id="nomeCompleto"
-                className="form-control"
-                type="text"
-                placeholder="Almir Sater"
-              />
-            </div>
-            <div className="col-md-2">
-              <label for="dataNascimento">Data de Nascimento </label>
-              <input id="dataNascimento" className="form-control" type="date" />
-            </div>
-            <div className="col-md-1">
-              <label for="idade">Idade </label>
-              <input
-                id="idade"
-                className="form-control"
-                type="text"
-                placeholder="43"
-              />
-            </div>
-
-            <div className="col-md-2">
-              <label for="sexo">Sexo* </label>
-              <select id="sexo" className="form-control">
-                <option value="Masculino">Masculino</option>
-                <option value="Masculino">Feminino</option>
-              </select>
-            </div>
-
-            <div className="col-md-2">
-              <label for="generoSocial">Gênero Social </label>
-              <select
-                id="generoSocial"
-                className="form-control"
-                name="selecione"
-              >
-                <option value="Masculino">Masculino</option>
-                <option value="Masculino">Feminino</option>
-              </select>
-            </div>
-          </div>
           <div className="row">
             <div className="col-md-2">
               <label for="cpf">CPF</label>
               <IMaskInput
                 className="form-control"
                 mask="000.000.000-00"
-                placeholder="48838829901"
+                placeholder=""
                 id="cpf"
+                value={tipoPessoa==='PACIENTE'?changePeople(tipoPessoa).cpf:''}
+                disabled={tipoPessoa==='PACIENTE'}
+                onChange={(e) => {
+                  if(tipoPessoa==='PACIENTE'){
+                    setDadosPaciente(changePeople(tipoPessoa).cpf);
+                  }
+                  
+                  
+                }}
+              />
+            </div>
+            <div className="col-md-2">
+              <label for="cns">CNS </label>
+              <IMaskInput
+                id="cns"
+                min={13}
+                max={13}
+                className="form-control"
+                mask="000.000.000.0000"
+                placeholder="Numero CSN"
+                onChange={(e) => {
+                  setDadosPaciente("cns", e.target.value);
+                  console.log(dadosPaciente.cns);
+                }}
+              />
+            </div>
+
+            <div className="col-md-2">
+              <label for="prontuario">Prontuário </label>
+              <input
+                id="prontuario"
+                type="text"
+                className="form-control"
+                placeholder="Prontuario"
+                onChange={(e) => {
+                  setDadosPaciente("prontuario", e.target.value);
+                  console.log(dadosPaciente.prontuario);
+                }}
               />
             </div>
 
@@ -75,104 +90,89 @@ const ComplementarCadastro = () => {
                 min={10}
                 className="form-control"
                 placeholder="Número do RG"
+                onChange={(e) => {
+                  setDadosPaciente("rg", e.target.value);
+                  console.log(dadosPaciente.rg);
+                }}
               />
             </div>
-
-            <div className="col-md-2">
-              <label for="dataEmissaoRg">Data de Emissão</label>
-              <input id="dataEmissaoRg" type="date" className="form-control" />
-            </div>
-
-            <div className="col-md-2">
-              <label for="digito">UF do RG</label>
-              <select id="estado" name="estado" className="form-control">
-                <option value="AC">Acre</option>
-                <option value="AL">Alagoas</option>
-                <option value="AP">Amapá</option>
-                <option value="AM">Amazonas</option>
-                <option value="BA">Bahia</option>
-                <option value="CE">Ceará</option>
-                <option value="DF">Distrito Federal</option>
-                <option value="ES">Espírito Santo</option>
-                <option value="GO">Goiás</option>
-                <option value="MA">Maranhão</option>
-                <option value="MT">Mato Grosso</option>
-                <option value="MS">Mato Grosso do Sul</option>
-                <option value="MG">Minas Gerais</option>
-                <option value="PA">Pará</option>
-                <option value="PB">Paraíba</option>
-                <option value="PR">Paraná</option>
-                <option value="PE">Pernambuco</option>
-                <option value="PI">Piauí</option>
-                <option value="RJ">Rio de Janeiro</option>
-                <option value="RN">Rio Grande do Norte</option>
-                <option value="RS">Rio Grande do Sul</option>
-                <option value="RO">Rondônia</option>
-                <option value="RR">Roraima</option>
-                <option value="SC">Santa Catarina</option>
-                <option value="SP">São Paulo</option>
-                <option value="SE">Sergipe</option>
-                <option value="TO">Tocantins</option>
-                <option value="EX">Estrangeiro</option>
-              </select>
-            </div>
-
-            {/* <div className="col-md-2">
-              <label for="nomeSocial">Nome Social </label>
-              <input
-                className="form-control"
-                type="text"
-                placeholder="Amanda Brazil"
-                id="nomeSocial"
-              />
-            </div> */}
-
-            <div className="col-md-3">
-              <label for="nomeSocial">Orgão Emissor </label>
+            <div className="col-md-1">
+              <label for="nomeSocial"> Emissor </label>
               <input
                 className="form-control"
                 type="text"
                 placeholder="Orgão Emissor"
                 id="nomeSocial"
+                onChange={(e) => {
+                  setDadosPaciente("orgaoEmissor", e.target.value);
+                  console.log(dadosPaciente.orgaoEmissor);
+                }}
+              />
+            </div>
+            <div className="col-md-2">
+              <label for="dataEmissaoRg">Data de Emissão</label>
+              <input
+                id="dataEmissaoRg"
+                type="date"
+                className="form-control"
+                onChange={(e) => {
+                  setDadosPaciente("dataEmissao", e.target.value);
+                  console.log(dadosPaciente.dataEmissao);
+                }}
               />
             </div>
           </div>
           <div className="row">
             <div className="col-md-2">
-              <label for="cns">CNS </label>
-              <IMaskInput
-                id="cns"
-                min={13}
-                max={13}
+              <label for="dataNascimento">Data de Nascimento </label>
+              <input
+                id="dataNascimento"
                 className="form-control"
-                mask="000.000.000.0000"
-                placeholder="Numero CSN"
+                type="date"
+                 
+                 value={tipoPessoa==='PACIENTE'?dadosPacienteApi.dataNascimento:dadosPaciente.dataNascimento}
+                 disabled={tipoPessoa==='PACIENTE'}
+                onChange={(e) => {
+                  if(tipoPessoa==='PACIENTE'){
+                    setDadosPaciente("dataNascimento", e.target.value);
+                  }
+                  
+                }}
               />
             </div>
-            <div className="col-md-2">
-              <label for="altura">Altura *</label>
-              <IMaskInput
-                id="altura"
-                max={3}
-                min={3}
-                className="form-control"
-                placeholder="000"
-                mask="000"
-              />
-            </div>
-
             <div className="col-md-1">
-              <label for="peso">Peso *</label>
-              <IMaskInput
-                id="peso"
-                max={3}
-                min={3}
+              <label for="idade">Idade </label>
+              <input
+                id="idade"
                 className="form-control"
-                mask="000"
-                placeholder="000"
+                type="text"
+                disabled={tipoPessoa==='PACIENTE'}
+                value={tipoPessoa==='PACIENTE'?dadosPacienteApi.idade:dadosPaciente.idade}
+                onChange={(e) => {
+                  if(tipoPessoa==='PACIENTE'){
+                    setDadosPaciente("idade", changePeople(tipoPessoa).idade);
+                    console.log(dadosPaciente.idade);
+                  }
+
+                }}
+
+                
               />
             </div>
+            <div className="col-md-3">
+              <label for="nomeCompleto">Nome Completo </label>
+              <input
+                id="nomeCompleto"
+                className="form-control"
+                type="text"
+                placeholder="Almir Sater"
+                onChange={(e) => {
+                  setDadosPaciente("nomeCompleto", e.target.value);
+                  console.log(dadosPaciente.nomeCompleto);
 
+                }}
+              />
+            </div>
             <div className="col-md-3">
               <label for="nomeSocial">Nome Social </label>
               <input
@@ -180,8 +180,35 @@ const ComplementarCadastro = () => {
                 type="text"
                 placeholder="Amanda Brazil"
                 id="nomeSocial"
+                onChange={(e) => {
+                  setDadosPaciente("nomeSocial", e.target.value);
+                  console.log(dadosPaciente.nomeSocial);
+                }}
               />
             </div>
+
+            <div className="col-md-2">
+              <label for="generoSocial">Gênero Social </label>
+              <select
+                id="generoSocial"
+                className="form-control"
+                name="selecione"
+                onChange={(e) => {
+                  setDadosPaciente("generoSocial", e.target.value);
+                  console.log(dadosPaciente.generoSocial);
+                }}
+              >
+                <option value="Masculino">Masculino</option>
+                <option value="Feminino">Feminino</option>
+                <option value="Queer">Queer</option>
+                <option value="intersexual">intersexual</option>
+                <option value="pansexual">pansexual</option>
+                <option value="Trangênero">Trangênero</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="row">
             <div className="col-md-3">
               <label for="nomeMae">Nome da Mãe *</label>
               <IMaskInput
@@ -189,63 +216,195 @@ const ComplementarCadastro = () => {
                 min={3}
                 className="form-control"
                 placeholder="Nome da mãe"
+                onChange={(e) => {
+                  setDadosPaciente("nomeMae", e.target.value);
+                  console.log(dadosPaciente.nomeMae);
+                }}
               />
             </div>
-          </div>
-          <div className="row">
-            <div className="col-md-3">
+            <div className="col-md-4">
               <label for="responsavel">Nome do Responsável *</label>
               <IMaskInput
                 id="responsavel"
                 min={3}
                 className="form-control"
                 placeholder="Nome do Responsável"
+                onChange={(e) => {
+                  setDadosPaciente("nomeResponsalve", e.target.value);
+                  console.log(dadosPaciente.nomeResponsalve);
+                }}
               />
             </div>
 
-            <div className="col-md-2 text-center mt-1 ">
-              <label className="text-center">Menor Emancipado?</label>
+            {nacionalidade === "Brasil" ? (
+              <div className="col-md-2 text-center mt-1 ">
+                <label className="text-center">UF Nascimento</label>
 
-              <div className="d-flex justify-content-between">
-                <div>
-                  <input
-                    type="radio"
-                    id="html"
-                    name="emancipado"
-                    value={true}
-                    onChange={() => {
-                      setEmancipado(true);
-                    }}
-                  />
-                  <label for="emancipado" className="mx-1">
-                    Sim
-                  </label>
-                </div>
-
-                <div>
-                  <input
-                    type="radio"
-                    id="naoEmancipado"
-                    name="emancipado"
-                    value={false}
-                    className="mx-1"
-                    onChange={() => {
-                      setEmancipado(false);
-                    }}
-                  />
-                  <label for="naoEmancipado">Não</label>
-                </div>
-              </div>
-            </div>
-            {emancipado ? (
-              <div className="col-md-2">
-                <label>RMN*</label>
-                <IMaskInput className="form-control" mask="000" min={3} />
+                <select
+                  className="form-control"
+                  onChange={(e) => {
+                    setDadosPaciente("ufNascimento", e.target.value);
+                    console.log(dadosPaciente.ufNascimento);
+                  }}
+                >
+                  <option value="AC">Acre</option>
+                  <option value="AL">Alagoas</option>
+                  <option value="AP">Amapá</option>
+                  <option value="AM">Amazonas</option>
+                  <option value="BA">Bahia</option>
+                  <option value="CE">Ceará</option>
+                  <option value="DF">Distrito Federal</option>
+                  <option value="ES">Espírito Santo</option>
+                  <option value="GO">Goiás</option>
+                  <option value="MA">Maranhão</option>
+                  <option value="MT">Mato Grosso</option>
+                  <option value="MS">Mato Grosso do Sul</option>
+                  <option value="MG">Minas Gerais</option>
+                  <option value="PA">Pará</option>
+                  <option value="PB">Paraíba</option>
+                  <option value="PR">Paraná</option>
+                  <option value="PE">Pernambuco</option>
+                  <option value="PI">Piauí</option>
+                  <option value="RJ">Rio de Janeiro</option>
+                  <option value="RN">Rio Grande do Norte</option>
+                  <option value="RS">Rio Grande do Sul</option>
+                  <option value="RO">Rondônia</option>
+                  <option value="RR">Roraima</option>
+                  <option value="SC">Santa Catarina</option>
+                  <option value="SP">São Paulo</option>
+                  <option value="SE">Sergipe</option>
+                  <option value="TO">Tocantins</option>
+                  <option value="EX">Estrangeiro</option>
+                </select>
               </div>
             ) : (
               ""
             )}
+            <div className="col-md-2 text-center mt-1 ">
+              <label className="text-center">Naturalidade</label>
 
+              <select
+                className="form-control"
+                onChange={(e) => {
+                  setDadosPaciente("naturalidade", e.target.value);
+                  console.log(dadosPaciente.naturalidade);
+                }}
+              >
+                <option value="AC">São Paulo</option>
+
+                <option value="mu">Muzambinho</option>
+              </select>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-2 mt-1">
+              <label className="mb-1">
+                <strong>Raça/Cor/Etnia</strong> *
+              </label>
+              <div>
+                <div className="d-flex justify-content-between">
+                  <div>
+                    <input
+                      name="tipoDeRaca"
+                      id="Branca"
+                      type="radio"
+                      value="Branca"
+                      onChange={(e) => {
+                        setIsIndigena(false);
+                        setDadosPaciente("raca", e.target.value);
+                        console.log(dadosPaciente.raca);
+                      }}
+                    />
+                    <label for="Branca" className="mx-1">
+                      Branca
+                    </label>
+                  </div>
+                  <div className="mx-1">
+                    <input
+                      name="tipoDeRaca"
+                      id="Amarela"
+                      type="radio"
+                      value="Amarela"
+                      className="mx-1"
+                      onChange={(e) => {
+                        setIsIndigena(false);
+                        setDadosPaciente("raca", e.target.value);
+                        console.log(dadosPaciente.raca);
+                      }}
+                    />
+                    <label for="Amarela">Amarela</label>
+                  </div>
+                </div>
+                <div className="d-flex justify-content-between">
+                  <div className="mt-2">
+                    <input
+                      name="tipoDeRaca"
+                      id="Preta"
+                      type="radio"
+                      value="Preta"
+                      onChange={(e) => {
+                        setIsIndigena(false);
+                        setDadosPaciente("raca", e.target.value);
+                        console.log(dadosPaciente.raca);
+                      }}
+                    />
+                    <label for="Preta" className="mx-1">
+                      Preta
+                    </label>
+                  </div>
+                  <div className="mt-2">
+                    <input
+                      name="tipoDeRaca"
+                      id="Indígena"
+                      type="radio"
+                      value="Indígena"
+                      className="mx-1"
+                      onChange={(e) => {
+                        setIsIndigena(true);
+                        setDadosPaciente("raca", e.target.value);
+                        console.log(dadosPaciente.raca);
+                      }}
+                    />
+                    <label for="Indígena">Indígena</label>
+                  </div>
+                </div>
+
+                <div className="d-flex justify-content-between">
+                  <div className="mt-2">
+                    <input
+                      name="tipoDeRaca"
+                      id="Parda"
+                      type="radio"
+                      value="Parda"
+                      onChange={(e) => {
+                        setIsIndigena(false);
+                        setDadosPaciente("raca", e.target.value);
+                        console.log(dadosPaciente.raca);
+                      }}
+                    />
+                    <label for="Parda" className="mx-1">
+                      Parda
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {isIndigena ? (
+              <div className="col-md-2 mt-1">
+                <label for="informarEtinia"> Etinia Indígena</label>
+                <input
+                  id="informarEtinia"
+                  type="text"
+                  className="form-control"
+                  onChange={(e) => {
+                    setDadosPaciente("etnia", e.target.value);
+                    console.log(dadosPaciente.etnia);
+                  }}
+                />
+              </div>
+            ) : (
+              ""
+            )}
             <div className="col-md-2">
               <label>Nacionalidade*</label>
               <select
@@ -254,6 +413,8 @@ const ComplementarCadastro = () => {
                 className="form-control"
                 onChange={(e) => {
                   setNacionalidade(e.target.value);
+                  setDadosPaciente("nacionalidade", e.target.value);
+                  console.log(dadosPaciente.nacionalidade);
                 }}
               >
                 <option value="Brasil" selected="selected">
@@ -550,47 +711,115 @@ const ComplementarCadastro = () => {
                 <option value="Zâmbia">Zâmbia</option>
               </select>
             </div>
+            <div className="col-md-2">
+              <label for="sexo">Sexo* </label>
+              <select
+                id="sexo"
+                className="form-control"
+                disabled={tipoPessoa==='PACIENTE'}
 
-            {nacionalidade === "Brasil" ? (
-              <div className="col-md-2 text-center mt-1 ">
-                <label className="text-center">UF de Nascimento</label>
+                value={tipoPessoa==='PACIENTE'?changePeople(tipoPessoa).sexo:dadosPaciente.sexo}
+                onChange={(e) => {
+                  if(tipoPessoa!=='PACIENTE'){
+                    setDadosPaciente("sexo", changePeople(tipoPessoa).sexo);
+                    console.log(dadosPaciente.sexo);
+                  }
+                }}
+              >
+                <option value="Masculino">Masculino</option>
+                <option value="Masculino">Feminino</option>
+              </select>
+            </div>
 
-                <select className="form-control">
-                  <option value="AC">Acre</option>
-                  <option value="AL">Alagoas</option>
-                  <option value="AP">Amapá</option>
-                  <option value="AM">Amazonas</option>
-                  <option value="BA">Bahia</option>
-                  <option value="CE">Ceará</option>
-                  <option value="DF">Distrito Federal</option>
-                  <option value="ES">Espírito Santo</option>
-                  <option value="GO">Goiás</option>
-                  <option value="MA">Maranhão</option>
-                  <option value="MT">Mato Grosso</option>
-                  <option value="MS">Mato Grosso do Sul</option>
-                  <option value="MG">Minas Gerais</option>
-                  <option value="PA">Pará</option>
-                  <option value="PB">Paraíba</option>
-                  <option value="PR">Paraná</option>
-                  <option value="PE">Pernambuco</option>
-                  <option value="PI">Piauí</option>
-                  <option value="RJ">Rio de Janeiro</option>
-                  <option value="RN">Rio Grande do Norte</option>
-                  <option value="RS">Rio Grande do Sul</option>
-                  <option value="RO">Rondônia</option>
-                  <option value="RR">Roraima</option>
-                  <option value="SC">Santa Catarina</option>
-                  <option value="SP">São Paulo</option>
-                  <option value="SE">Sergipe</option>
-                  <option value="TO">Tocantins</option>
-                  <option value="EX">Estrangeiro</option>
-                </select>
+            <div className="col-md-1">
+              <label for="peso">Peso *</label>
+              <IMaskInput
+                id="peso"
+                max={3}
+                min={3}
+                className="form-control"
+                mask="000"
+                placeholder="000"
+                onChange={(e) => {
+                  setDadosPaciente("peso", e.target.value);
+                }}
+              />
+            </div>
+            <div className="col-md-2">
+              <label for="altura">Altura *</label>
+              <IMaskInput
+                id="altura"
+                max={3}
+                min={3}
+                className="form-control"
+                placeholder="000"
+                mask="000"
+                onChange={(e) => {
+                  setDadosPaciente("altura", e.target.value);
+                  console.log(dadosPaciente.altura);
+                }}
+              />
+            </div>
+          </div>
+          <div className="row align-items-center">
+            <div className="col-md-2 text-center mt-4 ">
+              <label className="text-center">Menor Emancipado?</label>
+
+              <div className="d-flex justify-content-between">
+                <div>
+                  <input
+                    type="radio"
+                    id="html"
+                    name="emancipado"
+                    value={true}
+                    onChange={(e) => {
+                      setEmancipado(true);
+                      setDadosPaciente("emancipado", e.target.value);
+                      console.log(dadosPaciente.emancipado);
+                    }}
+                  />
+                  <label for="emancipado" className="mx-1">
+                    Sim
+                  </label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="naoEmancipado"
+                    name="emancipado"
+                    value={false}
+                    className="mx-1"
+                    onChange={(e) => {
+                      setEmancipado(false);
+                      setDadosPaciente("menorAntecipado", e.target.value);
+                      console.log(dadosPaciente.menorAntecipado);
+                    }}
+                  />
+                  <label for="naoEmancipado">Não</label>
+                </div>
+              </div>
+            </div>
+            {emancipado ? (
+              <div className="col-md-2">
+                <label>RMN*</label>
+                <IMaskInput
+                  className="form-control"
+                  mask="000"
+                  min={3}
+                  disabled={tipoPessoa==='PACIENTE'}
+                  value={tipoPessoa==='PACIENTE'?dadosPacienteApi.rmn:dadosPaciente.RMN}
+                  onChange={(e) => {
+                    if(tipoPessoa!=='PACIENTE'){
+                      setDadosPaciente("rmn", e.target.value);
+                    console.log(dadosPaciente.RMN);
+                    }
+                  }}
+                />
               </div>
             ) : (
               ""
             )}
-          </div>
-          <div className="row align-items-center">
             <div className="col-md-2  mt-1 ">
               <label>
                 <strong>Deficiente</strong>
@@ -603,8 +832,10 @@ const ComplementarCadastro = () => {
                     id="html"
                     name="deficiente"
                     value={true}
-                    onChange={() => {
+                    onChange={(e) => {
                       setDeficiente(true);
+                      setFichaMedica("deficiente", e.target.value);
+                      console.log(dadosPaciente.fichaMedica.deficiente);
                     }}
                   />
                   <label for="comDeficiencia" className="mx-1">
@@ -619,8 +850,10 @@ const ComplementarCadastro = () => {
                     name="deficiente"
                     value={false}
                     className="mx-1"
-                    onChange={() => {
+                    onChange={(e) => {
                       setDeficiente(false);
+                      setFichaMedica("deficiente", e.target.value);
+                      console.log(dadosPaciente.fichaMedica.deficiente);
                     }}
                   />
                   <label for="semDeficiencia">Não</label>
@@ -635,113 +868,10 @@ const ComplementarCadastro = () => {
                   id="tipoDeficiencia"
                   type="text"
                   className="form-control"
-                />
-              </div>
-            ) : (
-              ""
-            )}
-            <div className="col-md-3 mt-1">
-              <label className="mb-1">
-                <strong>Raça/Cor/Etnia</strong> *
-              </label>
-              <div>
-                <div className="d-flex justify-content-between">
-                  <div>
-                    <input
-                      name="tipoDeRaca"
-                      id="Branca"
-                      type="radio"
-                      value="Branca"
-                      onChange={() => {
-                        setIsIndigena(false);
-                      }}
-                    />
-                    <label for="Branca" className="mx-1">
-                      Branca
-                    </label>
-                  </div>
-                  <div className="mx-1">
-                    <input
-                      name="tipoDeRaca"
-                      id="Amarela"
-                      type="radio"
-                      value="Amarela"
-                      className="mx-1"
-                      onChange={() => {
-                        setIsIndigena(false);
-                      }}
-                    />
-                    <label for="Amarela">Amarela</label>
-                  </div>
-                </div>
-                <div className="d-flex justify-content-between">
-                  <div className="mt-2">
-                    <input
-                      name="tipoDeRaca"
-                      id="Preta"
-                      type="radio"
-                      value="Preta"
-                      onChange={() => {
-                        setIsIndigena(false);
-                      }}
-                    />
-                    <label for="Preta" className="mx-1">
-                      Preta
-                    </label>
-                  </div>
-                  <div className="mt-2">
-                    <input
-                      name="tipoDeRaca"
-                      id="Indígena"
-                      type="radio"
-                      value="Indígena"
-                      className="mx-1"
-                      onChange={() => {
-                        setIsIndigena(true);
-                      }}
-                    />
-                    <label for="Indígena">Indígena</label>
-                  </div>
-                </div>
-
-                <div className="d-flex justify-content-between">
-                  <div className="mt-2">
-                    <input
-                      name="tipoDeRaca"
-                      id="Parda"
-                      type="radio"
-                      value="Parda"
-                      onChange={() => {
-                        setIsIndigena(false);
-                      }}
-                    />
-                    <label for="Parda" className="mx-1">
-                      Parda
-                    </label>
-                  </div>
-                  <div className="mt-2">
-                    <input
-                      name="tipoDeRaca"
-                      id="SemInformacao"
-                      type="radio"
-                      value="SemInformacao"
-                      className="mx-1"
-                      onChange={() => {
-                        setIsIndigena(false);
-                      }}
-                    />
-                    <label for="SemInformacao">Sem Informacao</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {isIndigena ? (
-              <div className="col-md-2 mt-5">
-                <label for="informarEtinia"> Etinia Indígena</label>
-                <input
-                  id="informarEtinia"
-                  type="text"
-                  className="form-control"
+                  onChange={(e) => {
+                    setFichaMedica("tipoDeficiente", e.target.value);
+                    console.log(dadosPaciente.fichaMedica.tipoDeficiente);
+                  }}
                 />
               </div>
             ) : (
@@ -749,8 +879,10 @@ const ComplementarCadastro = () => {
             )}
           </div>
           <div className="row">
-            <div className="col-md-3 mt-1">
-              <label>Situação *</label>
+            <div className="col-md-3 mt-3 ">
+              <label className="mb-3">
+                <strong>Situação *</strong>
+              </label>
               <div>
                 <div className="d-flex justify-content-between">
                   <div>
@@ -759,6 +891,10 @@ const ComplementarCadastro = () => {
                       id="hemofilia"
                       type="radio"
                       value="hemofilia"
+                      onChange={(e) => {
+                        setFichaMedica("situacao", e.target.value);
+                        console.log(dadosPaciente.fichaMedica.situacao);
+                      }}
                     />
                     <label for="hemofilia" className="mx-1">
                       hemofilia
@@ -771,6 +907,10 @@ const ComplementarCadastro = () => {
                       type="radio"
                       value="Infarto"
                       className="mx-1"
+                      onChange={(e) => {
+                        setFichaMedica("situacao", e.target.value);
+                        console.log(dadosPaciente.fichaMedica.situacao);
+                      }}
                     />
                     <label for="Infarto">Infarto</label>
                   </div>
@@ -782,6 +922,10 @@ const ComplementarCadastro = () => {
                       id="Transplante"
                       type="radio"
                       value="Transplante"
+                      onChange={(e) => {
+                        setFichaMedica("situacao", e.target.value);
+                        console.log(dadosPaciente.fichaMedica.situacao);
+                      }}
                     />
                     <label for="Transplante" className="mx-1">
                       Transplante
@@ -794,6 +938,10 @@ const ComplementarCadastro = () => {
                       type="radio"
                       value="Gestante"
                       className="ml-4"
+                      onChange={(e) => {
+                        setFichaMedica("situacao", e.target.value);
+                        console.log(dadosPaciente.fichaMedica.situacao);
+                      }}
                     />
                     <label for="Gestante" className="ml-1">
                       Gestante
@@ -828,7 +976,108 @@ const ComplementarCadastro = () => {
         </form>
       </Accordions>
       <br />
-      <Accordions title="Contato Representante Legal">
+      {tipoPessoa!=='Paciente'?<Accordions title={` Dados Pessoais ${tipoPessoa}`}>
+        <div className="row">
+          <div className="col-md-3">
+            <label for="nomeRepresentanteOuPaciente">Nome do Responsável</label>
+            <input id="nomeRepresentanteOuPaciente" className="form-control"
+            value={changePeople(tipoPessoa).nomeCompleto}
+            onChange={(e)=>{
+              if(tipoPessoa==='Responsavel'){
+                setDadosResponsavel('nomeCompleto',e.target.value)
+                console.log(dadosResponsavel.nomeCompleto)
+              }
+              if(tipoPessoa==='Representante'){
+                setDadosRepresentante('nomeCompleto',e.target.value)
+                console.log(dadosResponsavel.nomeCompleto)
+              }
+                
+            }}
+            disabled
+            />
+          </div>
+          <div className="col-md-2">
+            <label for="nascimentoR">Data de nascimento</label>
+            <input id="nascimentoR" type="date" className="form-control"
+            value={changePeople(tipoPessoa).dataNascimento}
+            disabled
+            />
+          </div>
+
+          <div className="col-md-2">
+            <label for="sexoR">sexo</label>
+            <select id="sexoR"  className="form-control"
+            value={changePeople(tipoPessoa).sexo}
+            disabled
+            >
+                      <option value="Masculino">Masculino</option>
+                      <option value="Feminino">Feminino</option>
+            </select>
+          </div>
+
+          <div className="col-md-2">
+            <label for="generoSocialR">GeneroSocial</label>
+            <select id="generoSocialR"
+            onChange={()=>{
+
+            }}
+            className="form-control" >
+                      <option value="Masculino">Masculino</option>
+                      <option value="Feminino">Feminino</option>
+            </select>
+          </div>
+          
+
+          <div className="col-md-3">
+            <label for="nomeSocialR">Nome social</label>
+            <input id="nomeSocialR" className="form-control" />
+          </div>
+
+          <div className="row">
+          <div className="col-md-2">
+              <label for="cpfR">CPF</label>
+              <IMaskInput
+                className="form-control"
+                mask="000.000.000-00"
+                placeholder="48838829901"
+                id="cpfR"
+                value={changePeople(tipoPessoa).cpf}
+            disabled
+                onChange={(e) => {
+                  
+                }}
+              />
+              </div>
+
+              <div className="col-md-2">
+              <label for="rgr">RG</label>
+              <IMaskInput
+                id="rgr"
+                min={10}
+                className="form-control"
+                placeholder="Número do RG"
+                onChange={(e) => {
+                }}
+              />
+            </div>
+
+            <div className="col-md-2">
+              <label for="EmissorR"> Emissor </label>
+              <input
+                className="form-control"
+                type="text"
+                placeholder="Orgão Emissor"
+                id="EmissorR"
+                onChange={(e) => {
+                  
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </Accordions>:''}
+      <br></br>
+      <Accordions title={`Contato ${tipoPessoa}`}>
         <div className="row">
           <div className="col-md-3   ">
             <label className="mx-1">Celular*</label>
@@ -836,9 +1085,10 @@ const ComplementarCadastro = () => {
               <div className="col-md-3 ">
                 <IMaskInput
                   placeholder=""
-                  mask="(00)"
+                 
                   className="form-control "
-
+                  disabled
+                  value={"14"}
                 />
               </div>
               <div className="col-md-9">
@@ -846,6 +1096,8 @@ const ComplementarCadastro = () => {
                   placeholder=""
                   mask="00000-00000"
                   className="form-control ms-3"
+                  value={changePeople(tipoPessoa).Contato.celular}
+                  disabled
                 />
               </div>
             </div>
@@ -858,6 +1110,8 @@ const ComplementarCadastro = () => {
                   placeholder=""
                   mask="(00)"
                   className="form-control"
+                  value='11'
+                  disabled
                 />
               </div>
               <div className="col-md-9">
@@ -865,6 +1119,8 @@ const ComplementarCadastro = () => {
                   placeholder=""
                   mask="00000-00000"
                   className="form-control"
+                  disabled
+                  value={changePeople(tipoPessoa).Contato.telefone1}
                 />
               </div>
             </div>
@@ -878,6 +1134,8 @@ const ComplementarCadastro = () => {
                   placeholder=""
                   mask="(00)"
                   className="form-control"
+                  value="22"
+                  disabled
                 />
               </div>
               <div className="col-md-9">
@@ -885,6 +1143,8 @@ const ComplementarCadastro = () => {
                   placeholder=""
                   mask="00000-00000"
                   className="form-control"
+                  value={changePeople(tipoPessoa).Contato.telefone2}
+                  disabled
                 />
               </div>
             </div>
@@ -892,10 +1152,13 @@ const ComplementarCadastro = () => {
         </div>
         <div className="row">
           <div className="col-md-6">
-              <label>Email</label>
-              <IMaskInput  className="form-control"/>
+            <label>Email</label>
+            <IMaskInput className="form-control"
+            
+            value={changePeople(tipoPessoa).Contato.email}
+              disabled
+            />
           </div>
-
         </div>
       </Accordions>
     </div>
